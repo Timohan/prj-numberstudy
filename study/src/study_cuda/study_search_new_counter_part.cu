@@ -38,21 +38,7 @@ int getStudyBestResultNewCounterPartPositionIndex(const int *listCounterPartInde
 
 #ifdef CUDA_COMPILE
 __global__
-void studyBestResultNewCounterPart(const ListTableData *list,
-                    double *listCalculatedBestResultValue,
-                    double *listCalculatedDotProductValues,
-                    double *globalBestResultMax,
-                    const int *bestMultipliersPrimary       /* [MAX_MATRIX_COLUMS] */,
-
-                    const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-
-                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd,
-                    const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount)
-#else
+#endif
 /**
  * @brief study fine new counter part
  * 
@@ -65,27 +51,28 @@ void studyBestResultNewCounterPart(const ListTableData *list,
  * @param listCounterPartPreviousIndex current found best previous indexes for counter parts
  * @param listCounterPartMathType current found best math types for counter parts
  * @param bestCounterPartMultipliersCounter current best multpliers for counter parts
- * @param partIndex part index to calculate new multpliers for counterPartIndex (on gpu, this is calculated from blockIdx)
- * @param partIndexMax max part index
- * @param partIndexAdd value to add to get real part index
  * @param listResultColumnIndex list of result columns that are used to study
  * @param listResultColumnIndexCount list of result columns count
+ * @param partIndexMax max part index
+ * @param partIndexAdd value to add to get real part index
+ * @param partIndex part index to calculate new multpliers for counterPartIndex (on gpu, this is calculated from blockIdx)
  */
 void studyBestResultNewCounterPart(const ListTableData *list,
                     double *listCalculatedBestResultValue,
                     double *listCalculatedDotProductValues,
                     double *globalBestResultMax,
-                    const int *bestMultipliersPrimary       /* [MAX_MATRIX_COLUMS] */,
-
+                    const int *bestMultipliersPrimary /* [MAX_MATRIX_COLUMS] */,
                     const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
                     const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
                     const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
                     const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-
-                    uint64_cu partIndex, const uint64_cu partIndexMax, uint64_cu partIndexAdd,
                     const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount)
+                    const int listResultColumnIndexCount,
+                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd
+#ifndef CUDA_COMPILE
+                    , uint64_cu partIndex
 #endif
+                    )
 {
 #ifdef CUDA_COMPILE
     uint64_cu partIndex = static_cast<uint64_cu>(blockDim.x * blockIdx.x + threadIdx.x) + partIndexAdd;

@@ -17,13 +17,7 @@
 
 #ifdef CUDA_COMPILE
 __global__
-void studyBestResultPrimaryValue(const ListTableData *list,
-                    double *listCalculatedBestResultValue,
-                    double *listCalculatedBestRateValues,
-                    double *globalBestResultMax,
-                    const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount)
-#else
+#endif
 /**
  * @brief study best primary value
  * 
@@ -40,7 +34,6 @@ void studyBestResultPrimaryValue(const ListTableData *list,
                     double *globalBestResultMax,
                     const int *listResultColumnIndex,
                     const int listResultColumnIndexCount)
-#endif
 {
     int i;
     double localBestResult = DEFAULT_BEST_VALUE;

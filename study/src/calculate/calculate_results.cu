@@ -10,7 +10,9 @@
 #include "../study_cuda/generate_matrix_lines.h"
 #include "../study_cuda/calculate_generated_matrix_lines.h"
 #include "../study_cuda/generate_matrix_lines_calculate.h"
-
+#ifndef CUDA_COMPILE
+#include <cstdint>
+#endif
 /**
  * @brief calculate result
  * 

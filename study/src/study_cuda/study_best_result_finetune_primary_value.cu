@@ -17,20 +17,7 @@
 
 #ifdef CUDA_COMPILE
 __global__
-void studyBestResultFinetunePrimaryValue(const ListTableData *list,
-                    double *listCalculatedBestResultValue,
-                    double *listCalculatedDotProductValues,
-                    double *globalBestResultMax,
-
-                    const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-
-                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd,
-                    const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount)
-#else
+#endif
 /**
  * @brief study finetune primary
  * 
@@ -56,10 +43,13 @@ void studyBestResultFinetunePrimaryValue(const ListTableData *list,
                     const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
                     const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
                     const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-                    uint64_cu partIndex, const uint64_cu partIndexMax, uint64_cu partIndexAdd,
                     const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount)
+                    const int listResultColumnIndexCount,
+                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd
+#ifndef CUDA_COMPILE
+                    , uint64_cu partIndex
 #endif
+                    )
 {
 #ifdef CUDA_COMPILE
     uint64_cu partIndex = static_cast<uint64_cu>(blockDim.x * blockIdx.x + threadIdx.x) + partIndexAdd;

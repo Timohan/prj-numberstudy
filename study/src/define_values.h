@@ -5,13 +5,13 @@
  * @brief nvidia cuda malloc heap size
  * 1073741824 = 1024*1024*1024
  */
-#define NVIDIA_CUDA_HEAP_SIZE                 1073741824
+#define NVIDIA_CUDA_HEAP_SIZE                 4073741824
 
 /**
  * @brief nvidia gpu SM count
- * 
+ *
  */
-#define NVIDIA_GPU_SM_COUNT                 15
+#define NVIDIA_GPU_SM_COUNT                 24
 
 /**
  * @brief how many counter part indexes are for the calculation (max)

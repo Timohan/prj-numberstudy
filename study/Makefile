@@ -7,9 +7,9 @@
 #* \author Timo Hannukkala <timohannukkala@hotmail.com>
 #*/
 TARGET:=prj-numberstudy
-NVCC:=/usr/local/cuda/bin/nvcc
+NVCC:=/usr/bin/nvcc
 CXX:=g++
-LDFLAGS+=-L/usr/local/cuda/targets/x86_64-linux/lib
+LDFLAGS+=-L/usr/lib/x86_64-linux-gnu/lib64
 LDFLAGS+=-lcudart -lcudadevrt
 CXXFLAGS+=-g -Wall -pedantic -c -pipe -std=gnu++17 -W -D_REENTRANT -fPIC
 # set current make dir

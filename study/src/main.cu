@@ -38,6 +38,8 @@
 #define THREADS_PER_BLOCK 1
 #endif
 
+#include "macros.h"
+
 /*!
  * \brief main
  * \return
@@ -77,58 +79,32 @@ int main(int argc , char *argv[])
     printf("Set tables for study\n");
 #ifdef CUDA_COMPILE
     cudaDeviceSetLimit(cudaLimitMallocHeapSize, NVIDIA_CUDA_HEAP_SIZE);
-    cudaMalloc((void**)&d_listTableData, sizeof(ListTableData));
-    initListTableData<<<1, 1>>>(d_listTableData, m_dataTableLoader.getListTableData()->m_listTableDataCount);
-    cudaDeviceSynchronize();
-#else
-    d_listTableData = new ListTableData;
-    host_initListTableData(d_listTableData, m_dataTableLoader.getListTableData()->m_listTableDataCount);
 #endif
+    PRJ_ALLOC(d_listTableData, ListTableData, 1)
+    PRJ_FUNC_CALL_SINGLE(initListTableData, d_listTableData, m_dataTableLoader.getListTableData()->m_listTableDataCount);
+    PRJ_CUDA_WAIT();
     for (i=0;i<m_dataTableLoader.getListTableData()->m_listTableDataCount;i++) {
-#ifdef CUDA_COMPILE
-        setListTableDataTable<<<1, 1>>>(d_listTableData, m_dataTableLoader.getListTableData()->m_listTableData[i], i, m_dataTableLoader.getListTableData()->m_listTableDataCount);
-#else
-        host_setListTableDataTable(d_listTableData, &m_dataTableLoader.getListTableData()->m_listTableData[i], i, m_dataTableLoader.getListTableData()->m_listTableDataCount);
-#endif
+        PRJ_FUNC_CALL_SINGLE(setListTableDataTable, d_listTableData, m_dataTableLoader.getListTableData()->m_listTableData[i], i, m_dataTableLoader.getListTableData()->m_listTableDataCount);
         for (cellIndex=0;cellIndex<m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCellCount;cellIndex++) {
-#ifdef CUDA_COMPILE
-            setListTableDataTableCell<<<1, 1>>>(
+            PRJ_FUNC_CALL_SINGLE(setListTableDataTableCell,
                 d_listTableData,
                 m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_value,
                 m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_columnIndex,
                 m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_rowIndex, i, 
                 cellIndex, m_dataTableLoader.getListTableData()->m_listTableDataCount);
-#else
-            host_setListTableDataTableCell(
-                d_listTableData,
-                m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_value,
-                m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_columnIndex,
-                m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_rowIndex, i, 
-                cellIndex, m_dataTableLoader.getListTableData()->m_listTableDataCount);
-#endif
         }
-#ifdef CUDA_COMPILE
-        cudaDeviceSynchronize();
-#endif
+        PRJ_CUDA_WAIT();
     }
 
-#ifdef CUDA_COMPILE
     for (i=0;i<m_dataTableLoader.getListTableData()->m_listTableDataCount;i++) {
-        setListTableDataCounterParts<<<1, 1>>>(d_listTableData,  i);
+        PRJ_FUNC_CALL_SINGLE(setListTableDataCounterParts, d_listTableData,  i);
     }
-    cudaDeviceSynchronize();
-    setListTableDataCellPreviousNextCells<<<1, 1>>>(d_listTableData);
-    cudaDeviceSynchronize();
+    PRJ_CUDA_WAIT();
+    PRJ_FUNC_CALL_SINGLE(setListTableDataCellPreviousNextCells, d_listTableData);
+    PRJ_CUDA_WAIT();
 
-    generateAcceptableTableData<<<1, 1>>>(d_listTableData, listResultColumnIndex[0]);
-    cudaDeviceSynchronize();
-#else
-    for (i=0;i<m_dataTableLoader.getListTableData()->m_listTableDataCount;i++) {
-        host_setListTableDataCounterParts(d_listTableData,  i);
-    }
-    host_setListTableDataCellPreviousNextCells(d_listTableData);
-    host_generateAcceptableTableData(d_listTableData, listResultColumnIndex[0]);
-#endif
+    PRJ_FUNC_CALL_SINGLE(generateAcceptableTableData, d_listTableData, listResultColumnIndex[0]);
+    PRJ_CUDA_WAIT();
     printf("Study first primary values\n");
 
     StudyPrimaryValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
@@ -139,23 +115,16 @@ int main(int argc , char *argv[])
                                  m_dataTableLoader.getListTableData()->m_listTableDataCount)) {
             break;
         }
-#ifdef CUDA_COMPILE
-        cudaDeviceSynchronize();
-#endif
+        PRJ_CUDA_WAIT();
     }
 
     StudyFinetuneCounterPartValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
     printf("Study searching primary value finetunes\n");
     StudyFinetunePrimaryValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
 
-#ifdef CUDA_COMPILE
-    cudaDeviceSynchronize();
-    clearListTableData<<<1, 1>>>(d_listTableData);
-    cudaFree(d_listTableData);
-#else
-    host_clearListTableData(d_listTableData);
-    delete d_listTableData;
-#endif
+    PRJ_CUDA_WAIT();
+    PRJ_FUNC_CALL_SINGLE(clearListTableData, d_listTableData);
+    PRJ_FREE(d_listTableData)
     m_bestResult.save(options.getStudyResultFile());
 
     return 0;

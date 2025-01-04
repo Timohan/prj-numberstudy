@@ -14,16 +14,16 @@ CUDA libraries (Nvidia's drivers).
 
 You can modify SM count on file src/define_values.h
 
-Line: #define NVIDIA_GPU_SM_COUNT                 15
+Line: #define NVIDIA_GPU_SM_COUNT                 24
 
-Change the number "15" to for your Nvidia's GPU SM count.  
+Change the number "24" to for your Nvidia's GPU SM count.
 Larger number is faster as long your GPU have enough SM count.
 
 ### CUDA Heap size
 
 On large number of spreadsheets, you may also need increase the heap size
 
-Line: "#define NVIDIA_CUDA_HEAP_SIZE                 1073741824"
+Line: "#define NVIDIA_CUDA_HEAP_SIZE                 4294967296"
 
 ### Build program with CUDA
 

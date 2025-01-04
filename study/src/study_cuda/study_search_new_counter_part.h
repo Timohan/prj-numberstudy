@@ -19,35 +19,22 @@ int getStudyBestResultNewCounterPartPositionIndex(const int *listCounterPartInde
 
 #ifdef CUDA_COMPILE
 __global__
-void studyBestResultNewCounterPart(const ListTableData *list,
-                    double *listCalculatedBestResultValue,
-                    double *listCalculatedDotProductValues,
-                    double *globalBestResultMax,
-                    const int *bestMultipliersPrimary /* [MAX_MATRIX_COLUMS] */,
-
-                    const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-
-                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd,
-                    const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount);
-#else
-void studyBestResultNewCounterPart(const ListTableData *list,
-                    double *listCalculatedBestResultValue,
-                    double *listCalculatedDotProductValues,
-                    double *globalBestResultMax,
-                    const int *bestMultipliersPrimary /* [MAX_MATRIX_COLUMS] */,
-
-                    const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
-                    const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
-
-                    uint64_cu partIndex, const uint64_cu partIndexMax, uint64_cu partIndexAdd,
-                    const int *listResultColumnIndex,
-                    const int listResultColumnIndexCount);
 #endif
+void studyBestResultNewCounterPart(const ListTableData *list,
+                    double *listCalculatedBestResultValue,
+                    double *listCalculatedDotProductValues,
+                    double *globalBestResultMax,
+                    const int *bestMultipliersPrimary /* [MAX_MATRIX_COLUMS] */,
+                    const int *listCounterPartIndex         /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
+                    const int *listCounterPartPreviousIndex /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
+                    const int *listCounterPartMathType      /* [MAX_COUNTER_PART_INDEX_COUNT] */ ,
+                    const int *bestCounterPartMultipliersCounter /* [MAX_MATRIX_COLUMS*MAX_COUNTER_PART_INDEX_COUNT] */,
+                    const int *listResultColumnIndex,
+                    const int listResultColumnIndexCount,
+                    const uint64_cu partIndexMax, const uint64_cu partIndexAdd
+#ifndef CUDA_COMPILE
+                    , uint64_cu partIndex
+#endif
+                    );
 
 #endif // STUDY_SEARCH_NEW_COUNTER_PART_H

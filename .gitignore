@@ -1,3 +1,5 @@
 *.o
 prj-numberstudy
+study/result.dat
+
 
