@@ -2,13 +2,14 @@
  * @file table_data_cell.h
  * @author Timo Hannukkala <timohannukkala@hotmail.com>
  * @brief Contains host and device functions for table cells
- * 
+ *
  * @copyright Copyright (c) 2024
  */
 #ifndef TABLE_DATA_CELL_H
 #define TABLE_DATA_CELL_H
 
 struct TableDataCell;
+struct TableData;
 
 struct TableDataCounterPart
 {

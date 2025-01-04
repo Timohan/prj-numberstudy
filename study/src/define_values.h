@@ -82,6 +82,7 @@ enum CounterPartMathType
 {
     CounterPartMathType_Plus_Normal = 0,
     CounterPartMathType_Plus_PreviousMinus,
+    CounterPartMathType_Plus_PreviousDivide,
     CounterPartMathType_Count
 };
 

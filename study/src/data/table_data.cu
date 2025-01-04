@@ -2,9 +2,9 @@
  * @file table_data.cu
  * @author Timo Hannukkala <timohannukkala@hotmail.com>
  * @brief handles table data struct
- * 
+ *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 #include "table_data.h"
 #include <stdio.h>
@@ -14,7 +14,7 @@ __host__ __device__
 #endif
 /**
  * @brief set table data to destionation
- * 
+ *
  * @param source this table data to destination
  * @param destination cell value will be filled to tableData
  * @param tableDataCount table data count
@@ -35,8 +35,8 @@ void setTableData(const TableData *source, TableData *destination, unsigned int 
 __host__ __device__
 #endif
 /**
- * @brief fill values to cell 
- * 
+ * @brief fill values to cell
+ *
  * @param destination cell value will be filled to tableData
  * @param value value of cell
  * @param columnIndex column index of cell
@@ -55,7 +55,7 @@ __host__ __device__
 /**
  * @brief fills counter part pointer to destionation cell
  * from table data
- * 
+ *
  * @param source counter part cell from this table data
  * @param sourceDataTableIndex table data index of source
  * @param destination counter part will be filled to this cell
@@ -76,10 +76,11 @@ __host__ __device__
 #endif
 /**
  * @brief pre-sets table data cells previous and next cells
- * 
+ * also calculates if m_canBePlus_PreviousDivide can be used
+ *
  * @param tableData [in/out] previous and next cells filled to this table data
  */
-void setTableDataCellPreviousNextCells(const TableData *tableData)
+void setTableDataCellPreviousNextCells(TableData *tableData)
 {
     if (tableData->m_listTableCellCount <= 1) {
         return;
@@ -98,6 +99,13 @@ void setTableDataCellPreviousNextCells(const TableData *tableData)
             tableData->m_listTableCell[i].m_previousTableDataCell.m_counterPart = &tableData->m_listTableCell[i-1];
             tableData->m_listTableCell[i].m_nextTableDataCell.m_counterPart = &tableData->m_listTableCell[i+1];
         }
+
+        if (tableData->m_listTableCell[i].m_value <= 0 && tableData->m_listTableCell[i].m_value >= 0) {
+            tableData->m_canBePlus_PreviousDivide = false;
+        }
+        if (i != 0 && tableData->m_canBePlus_PreviousDivide) {
+            tableData->m_canBePlus_PreviousDivide = tableData->m_listTableCell[i].m_value/tableData->m_listTableCell[i-1].m_value <= 1000;
+        }
     }
 }
 
@@ -106,7 +114,7 @@ __host__ __device__
 #endif
 /**
  * @brief clear table data
- * 
+ *
  * @param tableData [in/out] clears this table data
  */
 void clearTableData(TableData *tableData)
@@ -125,7 +133,7 @@ __host__ __device__
 #endif
 /**
  * @brief get cell index
- * 
+ *
  * @param tableData index of cell from this table data
  * @param fromIndex from index (starts searching from this index)
  * @param rowIndex row index of cell
@@ -149,7 +157,7 @@ __host__ __device__
 #endif
 /**
  * @brief get first cell index by column index from fromIndex
- * 
+ *
  * @param tableData index of cell from this table data
  * @param fromIndex from index (starts searching from this index)
  * @param columnIndex column index to search
@@ -171,7 +179,7 @@ __host__ __device__
 #endif
 /**
  * @brief get last index of cell by column index
- * 
+ *
  * @param tableData last index of cell from this table data
  * @param columnIndex column index to search
  * @return unsigned int index of last cell
@@ -190,7 +198,7 @@ unsigned int getTableDataTableCellIndexByColumnIndexLast(const TableData *tableD
 
 /**
  * @brief clear table data pointers
- * 
+ *
  * @param tableData [in/out] pointers are deleted from this table data
  */
 void host_clearTableData(TableData *tableData)
@@ -210,7 +218,7 @@ __host__ __device__
 #endif
 /**
  * @brief find largest column index for table data
- * 
+ *
  * @param tableData largest column index from this table data
  * @return unsigned int largest column index
  */
@@ -230,7 +238,7 @@ __host__ __device__
 #endif
 /**
  * @brief get if valid previous index to avoid extra calculation
- * 
+ *
  * @param source previous index of this table data
  * @param previousIndex previous index
  * @return true if it's acceptable (valid) previous index for study.
@@ -255,7 +263,7 @@ __host__ __device__
 #endif
 /**
  * @brief clears table data counter part pointers
- * 
+ *
  * @param tableData [in/out] clears table data pointers
  */
 void clearTableDataCounterPart(TableData *tableData)
@@ -272,7 +280,7 @@ __host__ __device__
 #endif
 /**
  * @brief get max row count from table data
- * 
+ *
  * @param list max row count from list
  * @return unsigned int max row count
  */

@@ -2,7 +2,7 @@
  * @file generate_matrix_lines.cu
  * @author Timo Hannukkala <timohannukkala@hotmail.com>
  * @brief generate matrix line for study
- * 
+ *
  * @copyright Copyright (c) 2024
  */
 #include "generate_matrix_lines.h"
@@ -14,7 +14,7 @@ __host__ __device__
 #endif
 /**
  * @brief get counter part for calculate matrix lines values
- * 
+ *
  * @param tableDataCell primary value cell, find counter part from this cell
  * @param counterPartIndex counter part index
  * @param previousIndex previous index
@@ -54,7 +54,7 @@ __host__ __device__
 #endif
 /**
  * @brief generate matrix line column value from cell
- * 
+ *
  * @param bestCounterPartMultiplier counter part multipliers - [0] is primary multiplier
  * @param previousIndex list of previous index
  * @param listCounterPartIndex list of counter parts
@@ -62,6 +62,7 @@ __host__ __device__
  * @param matrixLineColumnIndex matrix line column
  * @param tableDataCell primary cell
  * @param listCounterPartMathType math type for calculates
+ * @param cellParentTableData pointer to cell's parent data
  * @return true if calculation was possible.
  * @return false if not
  */
@@ -101,6 +102,13 @@ bool generateMatrixLineValueFromCell(const int bestCounterPartMultiplier[MAX_COU
                 }
                 value += static_cast<double>(bestCounterPartMultiplier[i+1])*(counterPartCell->m_value-counterPartPrevious->m_value)/100.0;
                 break;
+            case CounterPartMathType::CounterPartMathType_Plus_PreviousDivide:
+                counterPartPrevious = getPreviousNextCell(counterPartCell, -1);
+                if (!counterPartPrevious) {
+                    return false;
+                }
+                value += static_cast<double>(bestCounterPartMultiplier[i+1])*(counterPartCell->m_value/counterPartPrevious->m_value)/100.0;
+                break;
         }
     }
 
@@ -113,7 +121,7 @@ __host__ __device__
 #endif
 /**
  * @brief generates matrx line for study dot product values
- * 
+ *
  * @param bestCounterPartMultipliersPrimary primary value multipliers
  * @param bestCounterPartMultipliersCounter counter part multipliers
  * @param previousIndex list of previous indexes for counter pats
@@ -175,7 +183,7 @@ __host__ __device__
 /**
  * @brief checks if searching is acceptable for individual
  * counter part to prevent too much calculation
- * 
+ *
  * @param list table data list
  * @param counterPartIndex counter part index to search
  * @param resultColumnIndex end result column index
@@ -215,8 +223,16 @@ bool isAcceptableGenerating(const ListTableData *list,
                 return false;
             }
             break;
+        case CounterPartMathType::CounterPartMathType_Plus_PreviousDivide:
+            if (!getPreviousNextCell(counterPartCell, -1)) {
+                return false;
+            }
+            if (!list->m_listTableData[counterPartIndex].m_canBePlus_PreviousDivide) {
+                return false;
+            }
+            break;
     }
-    return counterPartCell->m_rowIndex >= 
+    return counterPartCell->m_rowIndex >=
         list->m_listTableData[0].m_listTableCell[ownIndex].m_rowIndex;
 }
 
@@ -226,7 +242,7 @@ __host__ __device__
 /**
  * @brief checks if it's acceptable for generating
  * for all previous indexes, max types and so on.
- * 
+ *
  * @param list table data list
  * @param listCounterPartIndex list of counter part indexes
  * @param resultColumnIndex column index of result to study
@@ -263,7 +279,7 @@ __host__ __device__
 #endif
 /**
  * @brief generates matrix lines for study
- * 
+ *
  * @param list table data list
  * @param bestCounterPartMultipliersPrimary current best multipliers for primary value
  * @param bestCounterPartMultipliersCounter current best multipliers for counter part values

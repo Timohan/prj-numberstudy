@@ -18,6 +18,7 @@ struct TableData
     unsigned int m_listTableCellCount = 0;
 
     bool m_previousNextIndex[MAX_PREVIOUS_NEXT_INDEX-MIN_PREVIOUS_NEXT_INDEX+1];
+    bool m_canBePlus_PreviousDivide = true; //< set pre-calculated if this table can be used to calculate with CounterPartMathType::CounterPartMathType_Plus_PreviousDivide
 };
 
 #ifdef CUDA_COMPILE
@@ -38,7 +39,7 @@ void setTableDataCounterPart(const TableData *source, const unsigned int sourceD
 #ifdef CUDA_COMPILE
 __host__ __device__
 #endif
-void setTableDataCellPreviousNextCells(const TableData *tableData);
+void setTableDataCellPreviousNextCells(TableData *tableData);
 
 #ifdef CUDA_COMPILE
 __host__ __device__
