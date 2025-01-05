@@ -29,6 +29,7 @@
 #include "study/study_find_new_counter_part.h"
 #include "study/study_finetune_counter_part_value.h"
 #include "options/options.h"
+#include "common/time_difference.h"
 
 #ifndef CUDA_BLOCK_NUM
 #define CUDA_BLOCK_NUM 1
@@ -57,6 +58,8 @@ int main(int argc , char *argv[])
     } else {
         printf("Loading table numbers for calculate\n");
     }
+    TimeDifference timeDifference;
+    timeDifference.resetTimer();
     DataTableLoader m_dataTableLoader;
     m_dataTableLoader.load(options.getTableFile());
     uint64_t i;
@@ -90,7 +93,7 @@ int main(int argc , char *argv[])
                 d_listTableData,
                 m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_value,
                 m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_columnIndex,
-                m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_rowIndex, i, 
+                m_dataTableLoader.getListTableData()->m_listTableData[i].m_listTableCell[cellIndex].m_rowIndex, i,
                 cellIndex, m_dataTableLoader.getListTableData()->m_listTableDataCount);
         }
         PRJ_CUDA_WAIT();
@@ -105,12 +108,12 @@ int main(int argc , char *argv[])
 
     PRJ_FUNC_CALL_SINGLE(generateAcceptableTableData, d_listTableData, listResultColumnIndex[0]);
     PRJ_CUDA_WAIT();
-    printf("Study first primary values\n");
+    printf("Study first primary values, Time: %lf\n", timeDifference.elapsedTimeFromBegin());
 
     StudyPrimaryValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
 
     for (int counterPartIndexPosition=0;counterPartIndexPosition<MAX_COUNTER_PART_INDEX_COUNT;counterPartIndexPosition++) {
-        printf("Study searching counter part %d (max: %d)\n", counterPartIndexPosition+1, MAX_COUNTER_PART_INDEX_COUNT);
+        printf("Study searching counter part %d (max: %d), Time: %lf\n", counterPartIndexPosition+1, MAX_COUNTER_PART_INDEX_COUNT, timeDifference.elapsedTimeFromBegin());
         if (!StudyFindNewCounterPart::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult,
                                  m_dataTableLoader.getListTableData()->m_listTableDataCount)) {
             break;
@@ -118,8 +121,8 @@ int main(int argc , char *argv[])
         PRJ_CUDA_WAIT();
     }
 
-    StudyFinetuneCounterPartValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
-    printf("Study searching primary value finetunes\n");
+    StudyFinetuneCounterPartValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult, timeDifference);
+    printf("Study searching primary value finetunes, Time: %lf\n", timeDifference.elapsedTimeFromBegin());
     StudyFinetunePrimaryValue::study(d_listTableData, listResultColumnIndex, listResultColumnIndexCount, &m_bestResult);
 
     PRJ_CUDA_WAIT();

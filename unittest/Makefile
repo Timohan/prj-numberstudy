@@ -9,10 +9,9 @@
 TARGET:=prj-numberstudy-unittest
 NVCC:=/usr/bin/nvcc
 CXX:=g++
-LDFLAGS+=-L/usr/local/cuda/targets/x86_64-linux/lib
+LDFLAGS+=-L/usr/lib/x86_64-linux-gnu/lib64
 LDFLAGS+=-lcudart -lcudadevrt
 CXXFLAGS+=-g -Wall -pedantic -c -pipe -std=gnu++17 -W -D_REENTRANT -fPIC
-CXXFLAGS+=-DDATABASEDIR=\"/home/timoh/pCloudDrive/economy\"
 # set current make dir
 CURRENT_DIR=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 

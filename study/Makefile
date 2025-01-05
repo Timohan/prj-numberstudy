@@ -43,6 +43,10 @@ src_loader_SRCDIR:=$(CURRENT_DIR)src/loader
 src_loader_SRCS:=$(wildcard $(src_loader_SRCDIR)/*.cpp)
 src_loader_OBJS:=$(src_loader_SRCS:.cpp=.o)
 
+src_common_SRCDIR:=$(CURRENT_DIR)src/common
+src_common_SRCS:=$(wildcard $(src_common_SRCDIR)/*.cpp)
+src_common_OBJS:=$(src_common_SRCS:.cpp=.o)
+
 src_calculate_SRCDIR:=$(CURRENT_DIR)src/calculate
 src_calculate_SRCS:=$(wildcard $(src_calculate_SRCDIR)/*.cu)
 src_calculate_OBJS:=$(src_calculate_SRCS:.cu=.o)
@@ -51,9 +55,9 @@ src_options_SRCDIR:=$(CURRENT_DIR)src/options
 src_options_SRCS:=$(wildcard $(src_options_SRCDIR)/*.cpp)
 src_options_OBJS:=$(src_options_SRCS:.cpp=.o)
 
-default: $(src_OBJS) $(src_options_OBJS) $(src_calculate_OBJS) $(src_search_part_index_OBJS) $(src_data_OBJS) $(src_study_OBJS) $(src_loader_OBJS) $(src_study_short_OBJS) $(src_matrix_OBJS)
-	$(NVCC) --device-link $(src_calculate_OBJS) $(src_options_OBJS) $(src_search_part_index_OBJS) $(src_study_OBJS) $(src_OBJS) $(src_matrix_OBJS)  $(src_data_OBJS) $(src_study_short_OBJS) --output-file link.o
-	$(CXX) $(src_loader_OBJS) $(src_options_OBJS) $(src_calculate_OBJS) $(src_search_part_index_OBJS) $(src_study_short_OBJS) $(src_study_OBJS) $(src_OBJS) $(src_matrix_OBJS) $(src_data_OBJS) link.o $(LDFLAGS) -o $(TARGET)
+default: $(src_OBJS) $(src_common_OBJS) $(src_options_OBJS) $(src_calculate_OBJS) $(src_search_part_index_OBJS) $(src_data_OBJS) $(src_study_OBJS) $(src_loader_OBJS) $(src_study_short_OBJS) $(src_matrix_OBJS)
+	$(NVCC) --device-link $(src_calculate_OBJS) $(src_common_OBJS) $(src_options_OBJS) $(src_search_part_index_OBJS) $(src_study_OBJS) $(src_OBJS) $(src_matrix_OBJS)  $(src_data_OBJS) $(src_study_short_OBJS) --output-file link.o
+	$(CXX) $(src_loader_OBJS) $(src_common_OBJS) $(src_options_OBJS) $(src_calculate_OBJS) $(src_search_part_index_OBJS) $(src_study_short_OBJS) $(src_study_OBJS) $(src_OBJS) $(src_matrix_OBJS) $(src_data_OBJS) link.o $(LDFLAGS) -o $(TARGET)
 
 $(src_OBJS):%.o: %.cu
 	$(NVCC) --device-c -DCUDA_COMPILE $(COMMONFLAGS) $(src_SRCS) --output-directory $(src_SRCDIR)
@@ -82,6 +86,9 @@ $(src_loader_OBJS):%.o: %.cpp
 $(src_options_OBJS):%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(COMMONFLAGS) -c $< -o $@
 
+$(src_common_OBJS):%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(COMMONFLAGS) -c $< -o $@
+
 clean:
 	rm -f $(TARGET)
 	rm -f $(src_SRCDIR)/*.o
@@ -100,4 +107,5 @@ clean:
 	rm -f $(src_data_SRCDIR)/*.cpp
 	rm -f $(src_loader_SRCDIR)/*.o
 	rm -f $(src_options_SRCDIR)/*.o
+	rm -f $(src_common_SRCDIR)/*.o
 	rm -f $(CURRENT_DIR)*.o

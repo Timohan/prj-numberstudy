@@ -2,7 +2,7 @@
  * @file study_find_new_counter_part.cu
  * @author Timo Hannukkala <timohannukkala@hotmail.com>
  * @brief finds new counter part
- * 
+ *
  * @copyright Copyright (c) 2024
  */
 #include "study_find_new_counter_part.h"
@@ -22,7 +22,7 @@ __host__
 #endif
 /**
  * @brief cpu side study find new counter part
- * 
+ *
  * @param d_listTableData pointer to gpu list table data
  * @param listResultColumnIndex list of columns to find new counter part
  * @param listResultColumnIndexCount list of columns count

@@ -2,7 +2,7 @@
  * @file study_finetune_counter_part_value.cu
  * @author Timo Hannukkala <timohannukkala@hotmail.com>
  * @brief finetune counter part
- * 
+ *
  * @copyright Copyright (c) 2024
  */
 #include "study_finetune_counter_part_value.h"
@@ -25,7 +25,7 @@ __host__
 #endif
 /**
  * @brief finetune counter part search
- * 
+ *
  * @param d_listTableData pointer to list table data in gpu
  * @param listResultColumnIndex list of columns to find new counter part
  * @param listResultColumnIndexCount list of columns count
@@ -142,24 +142,27 @@ __host__
 #endif
 /**
  * @brief finetune counter parts
- * 
+ *
  * @param d_listTableData pointer to list table data in gpu
  * @param listResultColumnIndex list of columns to find new counter part
  * @param listResultColumnIndexCount list of columns count
  * @param bestResultStorage current best result
+ * @param timeDifference ref pointer to start time of study
  */
 void study(ListTableData *d_listTableData,
            const int *listResultColumnIndex,
            const int listResultColumnIndexCount,
-           BestResultStorage *bestResultStorage)
+           BestResultStorage *bestResultStorage,
+           TimeDifference &timeDifference)
 {
     for (unsigned int counterPartIndex=0;counterPartIndex<MAX_COUNTER_PART_INDEX_COUNT;counterPartIndex++) {
         int *listCounterPart = bestResultStorage->getListCounterPartIndex();
         if (listCounterPart[counterPartIndex] == 0) {
             continue;
         }
-        printf("Study searching counter part value finetunes %d of %d\n",
-                counterPartIndex+1, bestResultStorage->getListCounterPartCount()+1);
+        printf("Study searching counter part value finetunes %d of %d, Time: %lf\n",
+                counterPartIndex+1, bestResultStorage->getListCounterPartCount()+1,
+                timeDifference.elapsedTimeFromBegin());
         study(d_listTableData, listResultColumnIndex,
               listResultColumnIndexCount, bestResultStorage,
               counterPartIndex);
