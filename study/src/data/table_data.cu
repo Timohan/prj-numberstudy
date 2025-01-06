@@ -104,7 +104,7 @@ void setTableDataCellPreviousNextCells(TableData *tableData)
             tableData->m_canBePlus_PreviousDivide = false;
         }
         if (i != 0 && tableData->m_canBePlus_PreviousDivide) {
-            tableData->m_canBePlus_PreviousDivide = tableData->m_listTableCell[i].m_value/tableData->m_listTableCell[i-1].m_value <= 1000;
+            tableData->m_canBePlus_PreviousDivide = tableData->m_listTableCell[i].m_value/tableData->m_listTableCell[i-1].m_value <= MAX_PREVIOUS_VALUE_TO_CONTINUE;
         }
     }
 }

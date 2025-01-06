@@ -86,4 +86,6 @@ enum CounterPartMathType
     CounterPartMathType_Count
 };
 
+#define MAX_PREVIOUS_VALUE_TO_CONTINUE  100
+
 #endif

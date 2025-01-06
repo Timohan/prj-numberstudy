@@ -7,7 +7,7 @@
 #* \author Timo Hannukkala <timohannukkala@hotmail.com>
 #*/
 TARGET:=prj-numberstudy-unittest
-NVCC:=/usr/local/cuda/bin/nvcc
+NVCC:=/usr/bin/nvcc
 CXX:=g++
 LDFLAGS+=-L/usr/local/cuda/targets/x86_64-linux/lib
 LDFLAGS+=-lcudart -lcudadevrt

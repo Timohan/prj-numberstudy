@@ -4,7 +4,7 @@
  * @brief general calculate/study start dot products and result value
  *
  * @copyright Copyright (c) 2024
- * 
+ *
  */
 #include "study_best_result.h"
 #include "generate_matrix_lines.h"
@@ -16,7 +16,7 @@ __host__ __device__
 #endif
 /**
  * @brief study/calculate best result
- * 
+ *
  * @param globalBestResultMax [in/out] global best result
  * @param localBestResult [in/out] local best result
  * @param calculatedDotProductValues [out] calculated dot product values
@@ -28,8 +28,8 @@ __host__ __device__
  * @param listResultColumnIndexCount list of column indexes count
  * @param listCounterPartIndex list of counter part indexes
  * @param listCounterPartMathType list of counter part math types
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 bool studyBestResult(double *globalBestResultMax,
                     double *localBestResult,
@@ -43,14 +43,16 @@ bool studyBestResult(double *globalBestResultMax,
                     const int listCounterPartIndex[MAX_COUNTER_PART_INDEX_COUNT],
                     const CounterPartMathType listCounterPartMathType[MAX_COUNTER_PART_INDEX_COUNT])
 {
+    int i, initCount = 0;
     bool ret = true;
     unsigned int rowCount = getMaxRowCountFromListTableData(list);
     CudaMatrix4xX::ListMatrix4xX listMatrixLines;
     listMatrixLines.m_listMatrix4xXCount = listResultColumnIndexCount;
     listMatrixLines.m_listMatrix4xX = new CudaMatrix4xX::Matrix4xX[listResultColumnIndexCount];
-    for (int i=0;i<listResultColumnIndexCount;i++) {
+    for (i=0;i<listResultColumnIndexCount;i++) {
         CudaMatrix4xX::init(&listMatrixLines.m_listMatrix4xX[i], rowCount);
         listMatrixLines.m_listMatrix4xX[i].m_listMatrixLinesCount = 0;
+        initCount++;
         if (!generateMatrixLines(list,
                              bestCounterPartMultipliersPrimary,
                              bestCounterPartMultipliersCounter,
@@ -67,7 +69,7 @@ bool studyBestResult(double *globalBestResultMax,
     if (ret) {
         ret = calculateGeneratedMatrixLines(localBestResult, globalBestResultMax, &listMatrixLines, calculatedDotProductValues);
     }
-    for (int i=0;i<listResultColumnIndexCount;i++) {
+    for (i=0;i<initCount;i++) {
         CudaMatrix4xX::clear(&listMatrixLines.m_listMatrix4xX[i]);
     }
     delete[]listMatrixLines.m_listMatrix4xX;
